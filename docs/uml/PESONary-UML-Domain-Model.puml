@@ -1,5 +1,5 @@
 @startuml
-title Pesonary E-Wallet - Domain Model
+title Pesonary E-Wallet - Class Diagram
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 left to right direction
@@ -25,6 +25,7 @@ skinparam ClassAttributeFontColor #1f2328
 skinparam ClassFontStyle bold
 hide circle
 hide empty members
+package "com.pesonary.ewalletapi.entity" {
 class Account <<entity>> {
   - id : Long
   - balance : BigDecimal
@@ -145,6 +146,311 @@ enum WalletTier <<enumeration>> {
   - WalletTier(maxBalance : BigDecimal)
   + getMaxBalance() : BigDecimal
 }
+}
+package "com.pesonary.ewalletapi.dto" {
+class AccountDTO <<DTO>> {
+  - id : Long
+  - accountType : String
+  - balance : BigDecimal
+  - status : String
+  - tier : String
+  - customerId : Long
+  - customerName : String
+  - username : String
+  + getId() : Long
+  + setId(id : Long) : void
+  + getAccountType() : String
+  + setAccountType(accountType : String) : void
+  + getBalance() : BigDecimal
+  + setBalance(balance : BigDecimal) : void
+  + getStatus() : String
+  + setStatus(status : String) : void
+  + getTier() : String
+  + setTier(tier : String) : void
+  + getCustomerId() : Long
+  + setCustomerId(customerId : Long) : void
+  + getCustomerName() : String
+  + setCustomerName(customerName : String) : void
+  + getUsername() : String
+  + setUsername(username : String) : void
+}
+class ApiResponse <<DTO>> {
+  - status : int
+  - message : String
+  - data : T
+  - timestamp : LocalDateTime
+  + ApiResponse(status : int, message : String, data : T)
+  + ApiResponse(status : int, message : String)
+  + getTimestamp() : LocalDateTime
+  + getData() : T
+  + getMessage() : String
+  + getStatus() : int
+}
+class CustomerDTO <<DTO>> {
+  - id : Long
+  - fullName : String
+  - email : String
+  - phone : String
+  - username : String
+  + getId() : Long
+  + setId(id : Long) : void
+  + getFullName() : String
+  + setFullName(fullName : String) : void
+  + getEmail() : String
+  + setEmail(email : String) : void
+  + getPhone() : String
+  + setPhone(phone : String) : void
+  + getUsername() : String
+  + setUsername(username : String) : void
+}
+class LoginDTO <<DTO>> {
+  - username : String
+  - password : String
+  + getUsername() : String
+  + setUsername(username : String) : void
+  + getPassword() : String
+  + setPassword(password : String) : void
+}
+class RegisterDTO <<DTO>> {
+  - username : String
+  - password : String
+  - fullName : String
+  - email : String
+  - phone : String
+  + getUsername() : String
+  + setUsername(username : String) : void
+  + getPassword() : String
+  + setPassword(password : String) : void
+  + getFullName() : String
+  + setFullName(fullName : String) : void
+  + getEmail() : String
+  + setEmail(email : String) : void
+  + getPhone() : String
+  + setPhone(phone : String) : void
+}
+class TransactionDTO <<DTO>> {
+  - id : Long
+  - type : String
+  - amount : BigDecimal
+  - accountId : Long
+  - counterpartyAccountId : Long
+  - description : String
+  - referenceNo : String
+  - createdAt : LocalDateTime
+  + getId() : Long
+  + setId(id : Long) : void
+  + getType() : String
+  + setType(type : String) : void
+  + getAmount() : BigDecimal
+  + setAmount(amount : BigDecimal) : void
+  + getAccountId() : Long
+  + setAccountId(accountId : Long) : void
+  + getCounterpartyAccountId() : Long
+  + setCounterpartyAccountId(counterpartyAccountId : Long) : void
+  + getDescription() : String
+  + setDescription(description : String) : void
+  + getReferenceNo() : String
+  + setReferenceNo(referenceNo : String) : void
+  + getCreatedAt() : LocalDateTime
+  + setCreatedAt(createdAt : LocalDateTime) : void
+}
+}
+package "com.pesonary.ewalletapi.repository" {
+interface AccountRepository <<repository>> {
+  + findByStatus(status : AccountStatus) : List<Account>
+  + findByCustomerId(customerId : Long) : List<Account>
+}
+interface CustomerRepository <<repository>> {
+  + existsByEmail(email : String) : boolean
+}
+interface TransactionRepository <<repository>> {
+  + findByAccountIdOrderByCreatedAtDesc(accountId : Long) : List<Transaction>
+}
+interface UserRepository <<repository>> {
+  + findByUsername(username : String) : Optional<User>
+  + existsByUsername(username : String) : boolean
+}
+}
+package "com.pesonary.ewalletapi.service" {
+class AccountService <<service>> {
+  - accountRepository : AccountRepository
+  - customerRepository : CustomerRepository
+  + AccountService(accountRepository : AccountRepository, customerRepository : CustomerRepository)
+  + createAccount(dto : AccountDTO) : AccountDTO
+  + getAllAccounts() : List<AccountDTO>
+  + getPaginatedAccounts(page : int, size : int) : Page<AccountDTO>
+  + getAccountsByStatus(status : String) : List<AccountDTO>
+  + getAccountById(id : Long) : AccountDTO
+  + updateAccount(id : Long, dto : AccountDTO) : AccountDTO
+  + closeAccount(id : Long) : void
+  - findOrThrow(id : Long) : Account
+  - convertToDTO(account : Account) : AccountDTO
+}
+class CustomerService <<service>> {
+  - customerRepository : CustomerRepository
+  - userRepository : UserRepository
+  + CustomerService(customerRepository : CustomerRepository, userRepository : UserRepository)
+  + getCustomerById(id : Long) : CustomerDTO
+  + getMyProfile(username : String) : CustomerDTO
+  + getAllCustomers() : List<CustomerDTO>
+  + createCustomer(dto : CustomerDTO) : CustomerDTO
+  + updateCustomer(id : Long, dto : CustomerDTO) : CustomerDTO
+  + deleteCustomer(id : Long) : void
+  - findOrThrow(id : Long) : Customer
+  - convertToDTO(customer : Customer) : CustomerDTO
+}
+class TransactionService <<service>> {
+  - transactionRepository : TransactionRepository
+  - accountRepository : AccountRepository
+  + TransactionService(transactionRepository : TransactionRepository, accountRepository : AccountRepository)
+  + createTransaction(dto : TransactionDTO) : TransactionDTO
+  - debit(account : Account, amount : BigDecimal) : void
+  - credit(account : Account, amount : BigDecimal) : void
+  - requireActive(account : Account) : void
+  + getTransactionsByAccount(accountId : Long) : List<TransactionDTO>
+  + getTransactionById(id : Long) : TransactionDTO
+  + updateTransaction(id : Long, dto : TransactionDTO) : TransactionDTO
+  + deleteTransaction(id : Long) : void
+  - findOrThrow(id : Long) : Transaction
+  - convertToDTO(transaction : Transaction) : TransactionDTO
+}
+}
+package "com.pesonary.ewalletapi.controller" {
+class AccountController <<controller>> {
+  - accountService : AccountService
+  + AccountController(accountService : AccountService)
+  + getAccounts(status : String) : ResponseEntity<ApiResponse<List<AccountDTO>>>
+  + getPaginatedAccounts(page : int, size : int) : ResponseEntity<ApiResponse<Page<AccountDTO>>>
+  + createAccount(dto : AccountDTO) : ResponseEntity<ApiResponse<AccountDTO>>
+  + getAccountById(id : Long) : ResponseEntity<ApiResponse<AccountDTO>>
+  + updateAccount(id : Long, updatedDto : AccountDTO) : ResponseEntity<ApiResponse<AccountDTO>>
+  + closeAccount(id : Long) : ResponseEntity<ApiResponse<Void>>
+}
+class AuthController <<controller>> {
+  - authenticationManager : AuthenticationManager
+  - jwtUtil : JwtUtil
+  - userRepository : UserRepository
+  - customerRepository : CustomerRepository
+  - passwordEncoder : PasswordEncoder
+  + AuthController(authenticationManager : AuthenticationManager, jwtUtil : JwtUtil, userRepository : UserRepository, customerRepository : CustomerRepository, passwordEncoder : PasswordEncoder)
+  + register(dto : RegisterDTO) : ResponseEntity<ApiResponse<String>>
+  + login(dto : LoginDTO) : ResponseEntity<ApiResponse<String>>
+}
+class CustomerController <<controller>> {
+  - customerService : CustomerService
+  + CustomerController(customerService : CustomerService)
+  + createCustomer(dto : CustomerDTO) : ResponseEntity<ApiResponse<CustomerDTO>>
+  + getCustomerById(id : Long) : ResponseEntity<ApiResponse<CustomerDTO>>
+  + getAllCustomers() : ResponseEntity<ApiResponse<List<CustomerDTO>>>
+  + updateCustomer(id : Long, updatedDto : CustomerDTO) : ResponseEntity<ApiResponse<CustomerDTO>>
+  + deleteCustomerById(id : Long) : ResponseEntity<ApiResponse<Void>>
+  + getMyProfile(principal : Principal) : ResponseEntity<ApiResponse<CustomerDTO>>
+}
+class TransactionController <<controller>> {
+  - transactionService : TransactionService
+  + TransactionController(transactionService : TransactionService)
+  + createTransaction(dto : TransactionDTO) : ResponseEntity<ApiResponse<TransactionDTO>>
+  + getTransactionsByAccount(accountId : Long) : ResponseEntity<ApiResponse<List<TransactionDTO>>>
+  + getTransactionById(id : Long) : ResponseEntity<ApiResponse<TransactionDTO>>
+  + updateTransaction(id : Long, updatedDto : TransactionDTO) : ResponseEntity<ApiResponse<TransactionDTO>>
+  + deleteTransactionById(id : Long) : ResponseEntity<ApiResponse<Void>>
+}
+}
+package "com.pesonary.ewalletapi.security" {
+class AccountSecurity <<security>> {
+  - userRepository : UserRepository
+  - accountRepository : AccountRepository
+  + AccountSecurity(userRepository : UserRepository, accountRepository : AccountRepository)
+  + isOwnAccount(accountId : Long, username : String) : boolean
+  + isOwnCustomer(customerId : Long, username : String) : boolean
+}
+class CustomAccessDeniedHandler <<security>> {
+  - objectMapper : ObjectMapper
+  + CustomAccessDeniedHandler(objectMapper : ObjectMapper)
+  + handle(request : HttpServletRequest, response : HttpServletResponse, ex : AccessDeniedException) : void
+}
+class CustomAuthenticationEntryPoint <<security>> {
+  - objectMapper : ObjectMapper
+  + CustomAuthenticationEntryPoint(objectMapper : ObjectMapper)
+  + commence(request : HttpServletRequest, response : HttpServletResponse, authException : AuthenticationException) : void
+}
+class CustomUserDetailsService <<security>> {
+  - userRepository : UserRepository
+  + CustomUserDetailsService(userRepository : UserRepository)
+  + loadUserByUsername(username : String) : UserDetails
+}
+class JwtAuthenticationFilter <<security>> {
+  - jwtUtil : JwtUtil
+  - userDetailsService : CustomUserDetailsService
+  + JwtAuthenticationFilter(jwtUtil : JwtUtil, userDetailsService : CustomUserDetailsService)
+  # doFilterInternal(request : HttpServletRequest, response : HttpServletResponse, filterChain : FilterChain) : void
+}
+class JwtUtil <<security>> {
+  - signingKey : Key
+  - expirationMs : long
+  + JwtUtil(secret : String, expirationMs : long)
+  + generateToken(username : String) : String
+  - parseClaims(token : String) : Claims
+  + extractUsername(token : String) : String
+  + isTokenValid(token : String, user : UserDetails) : boolean
+}
+class SecurityConfig <<security>> {
+  - jwtAuthFilter : JwtAuthenticationFilter
+  - userDetailsService : CustomUserDetailsService
+  - authEntryPoint : CustomAuthenticationEntryPoint
+  - accessDeniedHandler : CustomAccessDeniedHandler
+  + SecurityConfig(jwtAuthFilter : JwtAuthenticationFilter, userDetailsService : CustomUserDetailsService, authEntryPoint : CustomAuthenticationEntryPoint, accessDeniedHandler : CustomAccessDeniedHandler)
+  + securityFilterChain(http : HttpSecurity) : SecurityFilterChain
+}
+}
+package "com.pesonary.ewalletapi.exception" {
+class BusinessRuleException <<exception>> {
+  + BusinessRuleException(message : String)
+}
+class ErrorResponseDTO <<exception>> {
+  - timestamp : LocalDateTime
+  - status : int
+  - errorType : String
+  - message : String
+  + ErrorResponseDTO(status : int, errorType : String, message : String)
+  + getTimestamp() : LocalDateTime
+  + getStatus() : int
+  + getErrorType() : String
+  + getMessage() : String
+}
+class GlobalExceptionHandler <<exception>> {
+  - log : Logger
+  + handleValidation(ex : MethodArgumentNotValidException) : ResponseEntity<ErrorResponseDTO>
+  + handleMalformedJson(ex : HttpMessageNotReadableException) : ResponseEntity<ErrorResponseDTO>
+  + handleTypeMismatch(ex : MethodArgumentTypeMismatchException) : ResponseEntity<ErrorResponseDTO>
+  + handleIllegalArgument(ex : IllegalArgumentException) : ResponseEntity<ErrorResponseDTO>
+  + handleNotFound(ex : ResourceNotFoundException) : ResponseEntity<ErrorResponseDTO>
+  + handleConflict(ex : DataIntegrityViolationException) : ResponseEntity<ErrorResponseDTO>
+  + handleBusinessRule(ex : BusinessRuleException) : ResponseEntity<ErrorResponseDTO>
+  + handleAuth(ex : AuthenticationException) : ResponseEntity<ErrorResponseDTO>
+  + handleBadCredentials(ex : BadCredentialsException) : ResponseEntity<ErrorResponseDTO>
+  + handleAccessDenied(ex : AccessDeniedException) : ResponseEntity<ErrorResponseDTO>
+  + handleAll(ex : Exception) : ResponseEntity<ErrorResponseDTO>
+}
+class ResourceNotFoundException <<exception>> {
+  + ResourceNotFoundException(message : String)
+}
+}
+package "com.pesonary.ewalletapi" {
+class PesonaryApiApplication <<class>> {
+  + main(args : String[]) : void
+}
+}
+
+package "Spring / Java (external)" {
+interface AccessDeniedHandler <<interface>>
+interface AuthenticationEntryPoint <<interface>>
+interface JpaRepository <<interface>>
+class OncePerRequestFilter <<external>>
+class RuntimeException <<external>>
+interface UserDetails <<interface>>
+interface UserDetailsService <<interface>>
+}
 
 Customer "1" -- "0..*" Account : owns >
 Account "1" -- "0..*" Transaction : records >
@@ -152,6 +458,48 @@ User "1" -- "1" Customer : profile >
 Account --> AccountStatus
 Account --> WalletTier
 Transaction --> TransactionType
-interface UserDetails <<interface>>
+AccountRepository --|> JpaRepository
+BusinessRuleException --|> RuntimeException
+CustomAccessDeniedHandler ..|> AccessDeniedHandler
+CustomAuthenticationEntryPoint ..|> AuthenticationEntryPoint
+CustomUserDetailsService ..|> UserDetailsService
+CustomerRepository --|> JpaRepository
+JwtAuthenticationFilter --|> OncePerRequestFilter
+ResourceNotFoundException --|> RuntimeException
+TransactionRepository --|> JpaRepository
 User ..|> UserDetails
+UserRepository --|> JpaRepository
+AccountController ..> AccountService
+AccountSecurity ..> AccountRepository
+AccountSecurity ..> UserRepository
+AccountService ..> AccountRepository
+AccountService ..> CustomerRepository
+AuthController ..> CustomerRepository
+AuthController ..> JwtUtil
+AuthController ..> UserRepository
+CustomUserDetailsService ..> UserRepository
+CustomerController ..> CustomerService
+CustomerService ..> CustomerRepository
+CustomerService ..> UserRepository
+JwtAuthenticationFilter ..> CustomUserDetailsService
+JwtAuthenticationFilter ..> JwtUtil
+SecurityConfig ..> CustomAccessDeniedHandler
+SecurityConfig ..> CustomAuthenticationEntryPoint
+SecurityConfig ..> CustomUserDetailsService
+SecurityConfig ..> JwtAuthenticationFilter
+TransactionController ..> TransactionService
+TransactionService ..> AccountRepository
+TransactionService ..> TransactionRepository
+GlobalExceptionHandler ..> BusinessRuleException
+GlobalExceptionHandler ..> ErrorResponseDTO
+CustomAccessDeniedHandler ..> ErrorResponseDTO
+CustomAuthenticationEntryPoint ..> ErrorResponseDTO
+GlobalExceptionHandler ..> ResourceNotFoundException
+CustomerService ..> BusinessRuleException
+CustomerService ..> ResourceNotFoundException
+AccountService ..> BusinessRuleException
+AccountService ..> ResourceNotFoundException
+TransactionService ..> BusinessRuleException
+TransactionService ..> ResourceNotFoundException
 @enduml
+

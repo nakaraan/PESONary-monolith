@@ -1,4 +1,4 @@
-package com.pesonary.ewalletapi.service;
+package com.pesonary.ewalletapi.security;
 
 import com.pesonary.ewalletapi.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

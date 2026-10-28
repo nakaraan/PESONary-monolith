@@ -1,0 +1,157 @@
+@startuml
+title Pesonary E-Wallet - Domain Model
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+left to right direction
+skinparam dpi 120
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontName Consolas
+skinparam roundCorner 0
+skinparam ArrowColor #4a5059
+skinparam ArrowFontSize 12
+skinparam class {
+  BackgroundColor #f1f3f4
+  BorderColor #4a5059
+  HeaderBackgroundColor #cfd8e3
+  FontColor #ffffff
+  StereotypeFontColor #4a5059
+  AttributeFontColor #1f2328
+}
+skinparam stereotypeCBackgroundColor #cfd8e3
+skinparam ClassFontColor #1f2328
+skinparam ClassAttributeFontColor #1f2328
+skinparam ClassFontStyle bold
+hide circle
+hide empty members
+class Account <<entity>> {
+  - id : Long
+  - balance : BigDecimal
+  - accountType : String
+  - status : AccountStatus
+  - customer : Customer
+  - version : Long
+  - tier : WalletTier
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  ~ onCreate() : void
+  ~ onUpdate() : void
+  + getId() : Long
+  + getBalance() : BigDecimal
+  + setBalance(balance : BigDecimal) : void
+  + getAccountType() : String
+  + setAccountType(accountType : String) : void
+  + getStatus() : AccountStatus
+  + setStatus(status : AccountStatus) : void
+  + getCustomer() : Customer
+  + setCustomer(customer : Customer) : void
+  + getVersion() : Long
+  + getTier() : WalletTier
+  + setTier(tier : WalletTier) : void
+  + getCreatedAt() : LocalDateTime
+  + getUpdatedAt() : LocalDateTime
+}
+enum AccountStatus <<enumeration>> {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+class Customer <<entity>> {
+  - id : Long
+  - fullName : String
+  - email : String
+  - phone : String
+  - user : User
+  - accounts : List<Account>
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  ~ onCreate() : void
+  ~ onUpdate() : void
+  + Customer()
+  + getId() : Long
+  + getFullName() : String
+  + setFullName(fullName : String) : void
+  + getEmail() : String
+  + setEmail(email : String) : void
+  + getPhone() : String
+  + setPhone(phone : String) : void
+  + getUser() : User
+  + setUser(user : User) : void
+  + getAccounts() : List<Account>
+  + setAccounts(accounts : List<Account>) : void
+  + getCreatedAt() : LocalDateTime
+  + getUpdatedAt() : LocalDateTime
+}
+class Transaction <<entity>> {
+  - id : Long
+  - type : TransactionType
+  - amount : BigDecimal
+  - description : String
+  - account : Account
+  - counterpartyAccountId : Long
+  - referenceNo : String
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  ~ onCreate() : void
+  ~ onUpdate() : void
+  + getId() : Long
+  + getType() : TransactionType
+  + setType(type : TransactionType) : void
+  + getAmount() : BigDecimal
+  + setAmount(amount : BigDecimal) : void
+  + getDescription() : String
+  + setDescription(description : String) : void
+  + getAccount() : Account
+  + setAccount(account : Account) : void
+  + getCounterpartyAccountId() : Long
+  + setCounterpartyAccountId(counterpartyAccountId : Long) : void
+  + getReferenceNo() : String
+  + getCreatedAt() : LocalDateTime
+  + getUpdatedAt() : LocalDateTime
+}
+enum TransactionType <<enumeration>> {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+}
+class User <<entity>> {
+  - id : Long
+  - username : String
+  - password : String
+  - role : String
+  - customer : Customer
+  + User()
+  + getAuthorities() : Collection<? extends GrantedAuthority>
+  + getUsername() : String
+  + getPassword() : String
+  + getCustomer() : Customer
+  + setCustomer(customer : Customer) : void
+  + getRole() : String
+  + setRole(role : String) : void
+  + setPassword(password : String) : void
+  + setUsername(username : String) : void
+  + getId() : Long
+  + setId(id : Long) : void
+  + isAccountNonExpired() : boolean
+  + isAccountNonLocked() : boolean
+  + isCredentialsNonExpired() : boolean
+  + isEnabled() : boolean
+}
+enum WalletTier <<enumeration>> {
+  BASIC
+  VERIFIED
+  - maxBalance : BigDecimal
+  - WalletTier(maxBalance : BigDecimal)
+  + getMaxBalance() : BigDecimal
+}
+
+Customer "1" -- "0..*" Account : owns >
+Account "1" -- "0..*" Transaction : records >
+User "1" -- "1" Customer : profile >
+Account --> AccountStatus
+Account --> WalletTier
+Transaction --> TransactionType
+interface UserDetails <<interface>>
+User ..|> UserDetails
+@enduml

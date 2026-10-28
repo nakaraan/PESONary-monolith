@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Slice tests with {@code @WebMvcTest} and MockMvc for {@link AuthController}.
- * <p>Each test method is one documented case in {@code docs/TEST_CASES.docx} ({@code TC-AU-01} to {@code TC-AU-07}); the test method name is the trace key.
+ * <p>Each test method is one documented case in {@code docs/PESONary Test Cases - Almin, Wesner III C..pdf} ({@code TC-AU-01} to {@code TC-AU-07}); the test method name is the trace key.
  * <p>Repositories, the encoder, the authentication manager and {@code JwtUtil} are mocked; filters are off ({@code addFilters = false}).
  *
  * @author Akaraan

@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Slice tests with {@code @WebMvcTest} and MockMvc for {@link CustomerController}.
- * <p>Each test method is one documented case in {@code docs/TEST_CASES.docx} ({@code TC-CC-01} to {@code TC-CC-18}); the test method name is the trace key.
+ * <p>Each test method is one documented case in {@code docs/PESONary Test Cases - Almin, Wesner III C..pdf} ({@code TC-CC-01} to {@code TC-CC-18}); the test method name is the trace key.
  * <p>The service is mocked and filters are off ({@code addFilters = false}), so these tests check status codes, JSON, validation and the exception mapping. {@code JwtUtil} and {@code CustomUserDetailsService} are mocked only because the JWT filter bean needs them.
  *
  * @author Akaraan

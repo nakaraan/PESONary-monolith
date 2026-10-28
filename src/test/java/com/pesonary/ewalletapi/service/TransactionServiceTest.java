@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests with Mockito for {@link TransactionService}.
- * <p>Each test method is one documented case in {@code docs/TEST_CASES.docx} ({@code TC-TS-01} to {@code TC-TS-17}); the test method name is the trace key.
+ * <p>Each test method is one documented case in {@code docs/PESONary Test Cases - Almin, Wesner III C..pdf} ({@code TC-TS-01} to {@code TC-TS-17}); the test method name is the trace key.
  * <p>Repositories are mocked, so there is no database or Spring context; method security does not run here.
  *
  * @author Akaraan

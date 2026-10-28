@@ -28,16 +28,15 @@ public class CustomerService {
     public CustomerDTO getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
     public CustomerDTO getMyProfile(String username) {
         return userRepository.findByUsername(username)
                 .map(User::getCustomer)          // null customer → empty Optional
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     @Transactional(readOnly = true)

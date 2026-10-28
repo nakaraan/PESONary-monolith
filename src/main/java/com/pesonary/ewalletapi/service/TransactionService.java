@@ -98,6 +98,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public TransactionDTO updateTransaction(Long id, TransactionDTO dto) {
         Transaction tx = findOrThrow(id);
         tx.setDescription(dto.getDescription());
@@ -105,6 +106,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTransaction(Long id) {
         // shortcut: does not reverse balances, add a reversing entry before real money moves
         transactionRepository.delete(findOrThrow(id));

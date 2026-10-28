@@ -19,10 +19,8 @@ public class Customer {
     private String email;
     private String phone;
 
-    /* // commented out for now
     @OneToOne(mappedBy = "customer")
     private User user;
-    */
 
     @OneToMany(mappedBy = "customer")
     private List<Account> accounts = new ArrayList<>();
@@ -71,6 +69,14 @@ public class Customer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<Account> getAccounts() {

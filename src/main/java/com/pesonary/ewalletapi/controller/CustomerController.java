@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -44,5 +45,11 @@ public class CustomerController {
     public ResponseEntity<ApiResponse<CustomerDTO>> deleteCustomerById(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.ok(new ApiResponse<>(200, "Customer deleted"));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<CustomerDTO>> getMyProfile(Principal principal) {
+        return ResponseEntity.ok(new ApiResponse<>(200, "Profile retrieved",
+                customerService.getMyProfile(principal.getName())));
     }
 }

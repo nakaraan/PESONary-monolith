@@ -105,6 +105,9 @@ public class AccountService {
         if (account.getCustomer() != null) {
             dto.setCustomerId(account.getCustomer().getId());
             dto.setCustomerName(account.getCustomer().getFullName());
+            if (account.getCustomer().getUser() != null) {
+                dto.setUsername(account.getCustomer().getUser().getUsername());
+            }
         }
         return dto;
     }

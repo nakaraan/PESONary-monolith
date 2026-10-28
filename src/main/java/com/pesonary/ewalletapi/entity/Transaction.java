@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table
@@ -36,6 +37,7 @@ public class Transaction {
     @PrePersist
     void onCreate() {
         createdAt = updatedAt = LocalDateTime.now();
+        referenceNo = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     @PreUpdate

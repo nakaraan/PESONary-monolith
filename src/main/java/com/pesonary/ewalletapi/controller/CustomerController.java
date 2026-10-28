@@ -42,7 +42,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CustomerDTO>> deleteCustomerById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCustomerById(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.ok(new ApiResponse<>(200, "Customer deleted"));
     }

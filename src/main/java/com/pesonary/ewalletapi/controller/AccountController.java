@@ -2,7 +2,6 @@ package com.pesonary.ewalletapi.controller;
 
 import com.pesonary.ewalletapi.dto.AccountDTO;
 import com.pesonary.ewalletapi.dto.ApiResponse;
-import com.pesonary.ewalletapi.dto.CustomerDTO;
 import com.pesonary.ewalletapi.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -39,25 +38,25 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<AccountDTO>> createCustomer (@Valid @RequestBody AccountDTO dto) {
+    public ResponseEntity<ApiResponse<AccountDTO>> createAccount(@Valid @RequestBody AccountDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(201, "Customer created", accountService.createAccount(dto)));
+                .body(new ApiResponse<>(201, "Account created", accountService.createAccount(dto)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AccountDTO>> getCustomerById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ApiResponse<>(200, "Customer found", accountService.getAccountById(id)));
+    public ResponseEntity<ApiResponse<AccountDTO>> getAccountById(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse<>(200, "Account found", accountService.getAccountById(id)));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AccountDTO>> updateCustomer(@PathVariable Long id, @Valid @RequestBody AccountDTO updatedDto) {
-        return ResponseEntity.ok(new ApiResponse<>(200, "Customer updated successfully", accountService.updateAccount(id, updatedDto)));
+    public ResponseEntity<ApiResponse<AccountDTO>> updateAccount(@PathVariable Long id, @Valid @RequestBody AccountDTO updatedDto) {
+        return ResponseEntity.ok(new ApiResponse<>(200, "Account updated successfully", accountService.updateAccount(id, updatedDto)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CustomerDTO>> deleteCustomerById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> closeAccount(@PathVariable Long id) {
         accountService.closeAccount(id);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Customer deleted"));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Account closed"));
     }
 }

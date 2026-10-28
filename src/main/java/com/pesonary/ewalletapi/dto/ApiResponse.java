@@ -8,14 +8,14 @@ public class ApiResponse <T> {
     private T data;
     private LocalDateTime timestamp;
 
-    public ApiResponse(int status, String message, T data, LocalDateTime timestamp) {
+    public ApiResponse(int status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiResponse(String message, int status) {
+    public ApiResponse(int status, String message) {
         this.message = message;
         this.status = status;
     }

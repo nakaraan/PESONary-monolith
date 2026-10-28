@@ -98,7 +98,7 @@ class CustomerControllerTest {
                 .thenThrow(new BusinessRuleException("Email is already in use"));
 
         mockMvc.perform(post("/api/v1/customers").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().is(422))
                 .andExpect(jsonPath("$.message").value("Email is already in use"));
     }
 

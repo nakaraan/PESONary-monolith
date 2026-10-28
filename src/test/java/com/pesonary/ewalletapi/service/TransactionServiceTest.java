@@ -59,20 +59,19 @@ class TransactionServiceTest {
     }
 
     /**
-     * Builds a transaction request.
+     * Builds a transaction request from wallet 1.
      * <p><b>Pre-conditions:</b> none.
      * <p><b>Post-conditions:</b> returns a new object; nothing else changes.
      *
-     * @param type DEPOSIT, WITHDRAWAL or TRANSFER
-     * @param accountId source wallet ID
+     * @param type     DEPOSIT, WITHDRAWAL or TRANSFER
      * @param targetId target wallet ID; null unless TRANSFER
-     * @param amount amount as a decimal string
+     * @param amount   amount as a decimal string
      * @return TransactionDTO object
      */
-    private TransactionDTO dto(String type, Long accountId, Long targetId, String amount) {
+    private TransactionDTO dto(String type, Long targetId, String amount) {
         TransactionDTO d = new TransactionDTO();
         d.setType(type);
-        d.setAccountId(accountId);
+        d.setAccountId(1L);
         d.setCounterpartyAccountId(targetId);
         d.setAmount(new BigDecimal(amount));
         return d;
@@ -105,7 +104,7 @@ class TransactionServiceTest {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(source));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(returnsFirstArg());
 
-        transactionService.createTransaction(dto("DEPOSIT", 1L, null, "25.50"));
+        transactionService.createTransaction(dto("DEPOSIT", null, "25.50"));
 
         assertEquals(new BigDecimal("125.50"), source.getBalance());
     }
@@ -120,7 +119,7 @@ class TransactionServiceTest {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(source));
 
         BusinessRuleException ex = assertThrows(BusinessRuleException.class,
-                () -> transactionService.createTransaction(dto("WITHDRAWAL", 1L, null, "75.00")));
+                () -> transactionService.createTransaction(dto("WITHDRAWAL", null, "75.00")));
 
         assertEquals("Insufficient funds", ex.getMessage());
         verify(transactionRepository, never()).save(any(Transaction.class));
@@ -138,7 +137,7 @@ class TransactionServiceTest {
         when(accountRepository.findById(2L)).thenReturn(Optional.of(target));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(returnsFirstArg());
 
-        transactionService.createTransaction(dto("TRANSFER", 1L, 2L, "200.00"));
+        transactionService.createTransaction(dto("TRANSFER", 2L, "200.00"));
 
         assertEquals(new BigDecimal("300.00"), source.getBalance());
         assertEquals(new BigDecimal("300.00"), target.getBalance());
@@ -156,7 +155,7 @@ class TransactionServiceTest {
         when(accountRepository.findById(2L)).thenReturn(Optional.of(target));
 
         BusinessRuleException ex = assertThrows(BusinessRuleException.class,
-                () -> transactionService.createTransaction(dto("TRANSFER", 1L, 2L, "200.00")));
+                () -> transactionService.createTransaction(dto("TRANSFER", 2L, "200.00")));
 
         assertEquals("Account is not active", ex.getMessage());
         assertEquals(new BigDecimal("500.00"), source.getBalance());
@@ -171,7 +170,7 @@ class TransactionServiceTest {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account(1L, "9900.00", AccountStatus.ACTIVE)));
 
         BusinessRuleException ex = assertThrows(BusinessRuleException.class,
-                () -> transactionService.createTransaction(dto("DEPOSIT", 1L, null, "200.00")));
+                () -> transactionService.createTransaction(dto("DEPOSIT", null, "200.00")));
 
         assertEquals("Wallet limit exceeded for the BASIC tier", ex.getMessage());
     }

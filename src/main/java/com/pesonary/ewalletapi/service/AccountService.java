@@ -12,6 +12,8 @@ import com.pesonary.ewalletapi.repository.AccountRepository;
 import com.pesonary.ewalletapi.repository.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class AccountService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountSecurity.isOwnCustomer(#dto.customerId, authentication.name)")
     public AccountDTO createAccount(AccountDTO dto) {
         Customer customer = customerRepository.findById(dto.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
@@ -47,7 +50,9 @@ public class AccountService {
 
         return convertToDTO(accountRepository.save(account));
     }
+
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
                 .map(this::convertToDTO)
@@ -55,11 +60,13 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<AccountDTO> getPaginatedAccounts(int page, int size) {
         return accountRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AccountDTO> getAccountsByStatus(String status) {
         return accountRepository.findByStatus(AccountStatus.valueOf(status.toUpperCase())).stream()
                 .map(this::convertToDTO)
@@ -67,11 +74,13 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
+    @PostAuthorize("hasRole('ADMIN') or returnObject.username == authentication.name")
     public AccountDTO getAccountById(Long id) {
         return convertToDTO(findOrThrow(id));
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public AccountDTO updateAccount(Long id, AccountDTO dto) {
         Account account = findOrThrow(id);
         account.setAccountType(dto.getAccountType());
@@ -86,6 +95,7 @@ public class AccountService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void closeAccount(Long id) {
         accountRepository.delete(findOrThrow(id));
     }

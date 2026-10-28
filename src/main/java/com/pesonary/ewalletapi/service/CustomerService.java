@@ -7,6 +7,7 @@ import com.pesonary.ewalletapi.exception.BusinessRuleException;
 import com.pesonary.ewalletapi.exception.ResourceNotFoundException;
 import com.pesonary.ewalletapi.repository.CustomerRepository;
 import com.pesonary.ewalletapi.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerDTO getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .map(this::convertToDTO)
@@ -30,6 +32,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerDTO getMyProfile(String username) {
         return userRepository.findByUsername(username)
                 .map(User::getCustomer)          // null customer → empty Optional
@@ -38,6 +41,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll().stream()
                 .map(this::convertToDTO)
@@ -45,6 +49,7 @@ public class CustomerService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerDTO createCustomer(CustomerDTO dto) {
         if (customerRepository.existsByEmail(dto.getEmail())) {
             throw new BusinessRuleException("Email is already in use");
@@ -57,6 +62,7 @@ public class CustomerService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerDTO updateCustomer(Long id, CustomerDTO dto) {
         Customer customer = findOrThrow(id);
         customer.setFullName(dto.getFullName());
@@ -66,6 +72,7 @@ public class CustomerService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCustomer(Long id) {
         customerRepository.delete(findOrThrow(id));
     }

@@ -9,6 +9,8 @@ import com.pesonary.ewalletapi.exception.BusinessRuleException;
 import com.pesonary.ewalletapi.exception.ResourceNotFoundException;
 import com.pesonary.ewalletapi.repository.AccountRepository;
 import com.pesonary.ewalletapi.repository.TransactionRepository;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountSecurity.isOwnAccount(#dto.accountId, authentication.name)")
     public TransactionDTO createTransaction(TransactionDTO dto) {
         Account source = accountRepository.findById(dto.getAccountId())
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
@@ -81,6 +84,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @accountSecurity.isOwnAccount(#accountId, authentication.name)")
     public List<TransactionDTO> getTransactionsByAccount(Long accountId) {
         return transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId).stream()
                 .map(this::convertToDTO)
@@ -88,6 +92,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
+    @PostAuthorize("hasRole('ADMIN') or @accountSecurity.isOwnAccount(returnObject.accountId, authentication.name)")
     public TransactionDTO getTransactionById(Long id) {
         return convertToDTO(findOrThrow(id));
     }

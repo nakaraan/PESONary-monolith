@@ -16,8 +16,7 @@ public class ApiResponse <T> {
     }
 
     public ApiResponse(int status, String message) {
-        this.message = message;
-        this.status = status;
+        this(status, message, null);
     }
 
     public LocalDateTime getTimestamp() {

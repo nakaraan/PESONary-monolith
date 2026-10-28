@@ -3,10 +3,10 @@ package com.pesonary.ewalletapi.exception;
 import java.time.LocalDateTime;
 
 public class ErrorResponseDTO {
-    LocalDateTime timestamp;
-    int status;
-    String errorType;
-    String message;
+    private LocalDateTime timestamp;
+    private int status;
+    private String errorType;
+    private String message;
 
     public ErrorResponseDTO(int status, String errorType, String message) {
         this.status = status;

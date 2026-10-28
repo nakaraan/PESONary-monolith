@@ -103,9 +103,9 @@ Tests run on an in-memory H2 database, so MySQL isn't needed. The coverage repor
 
 ## Project documents
 
-- UML class diagram: 
+- UML class diagram (all classes): [pesonary-class-diagram.png](docs/uml/pesonary-class-diagram.png) · [SVG](docs/uml/pesonary-class-diagram.svg) · [PlantUML source](docs/uml/pesonary-class-diagram.puml)
+- UML domain model (entities only): [PESONary-UML-Domain-Model.png](docs/uml/PESONary-UML-Domain-Model.png) · [PlantUML source](docs/uml/PESONary-UML-Domain-Model.puml)
 - Test cases: https://docs.google.com/document/d/1hl3CrwGZ-r3WNBTpfYL5ER1-1VfyIokvpH4_MWbVgtw/edit?usp=sharing
-- Postman collection: 
-- Demo video: [to be completed: video link]
+- Demo video: https://drive.google.com/drive/folders/1enpLAfuVpFz_oA0_5NvwzbYcCfs9cZVn?usp=sharing
 
 Author: Wesner Almin III

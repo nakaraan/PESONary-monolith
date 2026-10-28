@@ -84,6 +84,14 @@ public class Account {
         return version;
     }
 
+    public WalletTier getTier() {
+        return tier;
+    }
+
+    public void setTier(WalletTier tier) {
+        this.tier = tier;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

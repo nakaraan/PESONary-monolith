@@ -28,6 +28,10 @@ public class Account {
     @Version
     private Long version;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WalletTier tier;
+
     private LocalDateTime createdAt, updatedAt;
 
     @PrePersist

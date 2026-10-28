@@ -26,7 +26,10 @@ public class Transaction {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    private Long counterpartyAccountId;
+    private Long counterpartyAccountId; // --> other account in the transaction
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String referenceNo;
 
     private LocalDateTime createdAt, updatedAt;
 
@@ -82,6 +85,14 @@ public class Transaction {
 
     public void setCounterpartyAccountId(Long counterpartyAccountId) {
         this.counterpartyAccountId = counterpartyAccountId;
+    }
+
+    public String getReferenceNo() {
+        return referenceNo;
+    }
+
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
     }
 
     public LocalDateTime getCreatedAt() {

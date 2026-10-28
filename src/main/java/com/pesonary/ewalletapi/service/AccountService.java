@@ -1,7 +1,6 @@
 package com.pesonary.ewalletapi.service;
 
 import com.pesonary.ewalletapi.dto.AccountDTO;
-import com.pesonary.ewalletapi.dto.CustomerDTO;
 import com.pesonary.ewalletapi.entity.Account;
 import com.pesonary.ewalletapi.entity.AccountStatus;
 import com.pesonary.ewalletapi.entity.Customer;
@@ -46,7 +45,6 @@ public class AccountService {
         if (dto.getBalance().compareTo(account.getTier().getMaxBalance()) > 0) {
             throw new BusinessRuleException("Opening balance exceeds " + account.getTier() + " limit");
         }
-        account.setBalance(dto.getBalance());
 
         return convertToDTO(accountRepository.save(account));
     }
@@ -111,6 +109,7 @@ public class AccountService {
         dto.setAccountType(account.getAccountType());
         dto.setBalance(account.getBalance());
         dto.setStatus(account.getStatus().name());
+        dto.setTier(account.getTier().name());
 
         if (account.getCustomer() != null) {
             dto.setCustomerId(account.getCustomer().getId());

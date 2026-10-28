@@ -91,10 +91,6 @@ public class Transaction {
         return referenceNo;
     }
 
-    public void setReferenceNo(String referenceNo) {
-        this.referenceNo = referenceNo;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
